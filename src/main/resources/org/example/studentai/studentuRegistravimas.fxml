@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="480.0" prefWidth="640.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.studentai.HelloController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+   </padding>
+   <children>
+      <Pane prefHeight="494.0" prefWidth="566.0">
+         <children>
+            <Label layoutX="191.0" layoutY="-11.0" text="Studentų registravimo sistema">
+               <font>
+                  <Font name="Cambria" size="18.0"/>
+               </font>
+            </Label>
+            <Button layoutX="14.0" layoutY="42.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="Pridėti studentą" onAction="#addStudent">
+               <font>
+                  <Font name="Cambria" size="13.0"/>
+               </font>
+            </Button>
+            <TextField fx:id="vardasField" layoutX="143.0" layoutY="42.0"/>
+            <TextField fx:id="pavardeField" layoutX="309.0" layoutY="42.0"/>
+            <Label layoutX="199.0" layoutY="25.0" text="Vardas">
+               <font>
+                  <Font name="Cambria" size="14.0"/>
+               </font>
+            </Label>
+            <Label layoutX="346.0" layoutY="25.0" text="Pavardė">
+               <font>
+                  <Font name="Cambria" size="14.0"/>
+               </font>
+            </Label>
+            <TextField fx:id="grupeField" layoutX="470.0" layoutY="42.0" prefHeight="25.0" prefWidth="105.0"/>
+            <Label layoutX="478.0" layoutY="25.0" text="Grupė">
+               <font>
+                  <Font name="Cambria" size="14.0"/>
+               </font>
+            </Label>
+
+            <!-- Lentelė studentų sąrašui -->
+            <TableView fx:id="tableView" layoutX="50.0" layoutY="120.0" prefHeight="300.0" prefWidth="540.0">
+               <columns>
+                  <TableColumn fx:id="vardasColumn" text="Vardas"/>
+                  <TableColumn fx:id="pavardeColumn" text="Pavardė"/>
+                  <TableColumn fx:id="grupeColumn" text="Grupė"/>
+               </columns>
+            </TableView>
+         </children>
+      </Pane>
+   </children>
+</VBox>
