@@ -14,15 +14,15 @@ public class StudentFileManager {
 
     private static final String FILE_NAME = "students.txt";
 
-    // Metodas, skirtas studentui išsaugoti faile
-    public static void saveStudent(Student student) {
+    public static void saveStudent(Student student, String group) {
         try (FileWriter fileWriter = new FileWriter(FILE_NAME, true);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
-            printWriter.println(student.getVardas() + "," + student.getPavarde() + "," + student.getGrupe());
+            printWriter.println(group + "," + student.getVardas() + "," + student.getPavarde());
         } catch (IOException e) {
             System.out.println("Klaida įrašant studentą į failą: " + e.getMessage());
         }
     }
+
 
     // Metodas, skirtas nuskaityti visus studentus iš failo
     public static List<Student> loadStudents() {

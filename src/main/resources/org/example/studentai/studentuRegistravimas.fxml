@@ -31,6 +31,11 @@
                <font>
                   <Font name="Cambria" size="13.0" />
                </font></Button>
+            <Button layoutX="428.0" layoutY="80.0" onAction="#filterByGroup" text="Rodyti grupę">
+               <font>
+                  <Font name="Cambria" size="13.0" />
+               </font></Button>
+            <TextField fx:id="groupField" layoutX="309.0" layoutY="80.0" prefHeight="25.0" prefWidth="105.0" />
             <Button layoutX="112.0" layoutY="80.0" onAction="#editStudent" prefHeight="25.0" prefWidth="174.0" text="Redaguoti pasirinktą studentą">
                <font>
                   <Font name="Cambria" size="12.0" />

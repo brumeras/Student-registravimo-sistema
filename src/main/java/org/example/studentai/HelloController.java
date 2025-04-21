@@ -10,6 +10,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HelloController {
 
     @FXML private TextField vardasField;
@@ -19,6 +22,8 @@ public class HelloController {
     @FXML private TableColumn<Student, String> vardasColumn;
     @FXML private TableColumn<Student, String> pavardeColumn;
     @FXML private TableColumn<Student, String> grupeColumn;
+    @FXML private TextField groupField;
+
 
     private ObservableList<Student> studentList = FXCollections.observableArrayList();
 
@@ -52,10 +57,9 @@ public class HelloController {
                 studentList.add(student);
                 tableView.refresh();
 
-                // Įrašome studentą į failą
-                StudentFileManager.saveStudent(student);
+                // Čia buvo klaida! Pridėk grupę kaip antrą argumentą
+                StudentFileManager.saveStudent(student, grupe);
 
-                // Išvalo laukus po įrašymo
                 vardasField.clear();
                 pavardeField.clear();
                 grupeField.clear();
@@ -64,6 +68,7 @@ public class HelloController {
             }
         }
     }
+
 
     @FXML
     public void loadStudentList() {
@@ -99,5 +104,20 @@ public class HelloController {
             System.out.println("Pasirink studentą prieš redaguojant.");
         }
     }
+    @FXML
+    public void filterByGroup() {
+        String selectedGroup = groupField.getText(); // Grupės pavadinimas iš vartotojo įvesties
+        List<Student> filteredStudents = new ArrayList<>();
+
+        for (Student student : StudentFileManager.loadStudents()) {
+            if (student.getGrupe().equals(selectedGroup)) {
+                filteredStudents.add(student);
+            }
+        }
+
+        studentList.setAll(filteredStudents);
+        tableView.refresh();
+    }
+
 
 }
