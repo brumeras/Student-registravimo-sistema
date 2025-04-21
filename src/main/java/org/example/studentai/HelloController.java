@@ -1,6 +1,7 @@
 package org.example.studentai;
 
 import StudentuInformacija.Student;
+import StudentuInformacija.StudentFileManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -29,22 +30,74 @@ public class HelloController {
 
         tableView.setItems(studentList);
     }
+    private boolean studentExists(String vardas, String pavarde, String grupe) {
+        for (Student student : studentList) {
+            if (student.getVardas().equals(vardas) && student.getPavarde().equals(pavarde) && student.getGrupe().equals(grupe)) {
+                return true; // Studentas jau egzistuoja
+            }
+        }
+        return false; // Studentas dar neįrašytas
+    }
+
 
     @FXML
-    public void addStudent()
-    {
+    public void addStudent() {
         String vardas = vardasField.getText();
         String pavarde = pavardeField.getText();
         String grupe = grupeField.getText();
 
         if (!vardas.isEmpty() && !pavarde.isEmpty() && !grupe.isEmpty()) {
-            Student student = new Student(vardas, pavarde, grupe);
-            studentList.add(student);
+            if (!studentExists(vardas, pavarde, grupe)) {
+                Student student = new Student(vardas, pavarde, grupe);
+                studentList.add(student);
+                tableView.refresh();
 
-            // Išvalo laukus po įrašymo
+                // Įrašome studentą į failą
+                StudentFileManager.saveStudent(student);
+
+                // Išvalo laukus po įrašymo
+                vardasField.clear();
+                pavardeField.clear();
+                grupeField.clear();
+            } else {
+                System.out.println("Šis studentas jau yra įrašytas.");
+            }
+        }
+    }
+
+    @FXML
+    public void loadStudentList() {
+        studentList.setAll(StudentFileManager.loadStudents());
+        tableView.refresh();
+    }
+
+    @FXML
+    public void selectStudent() {
+        Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
+        if (selectedStudent != null) {
+            vardasField.setText(selectedStudent.getVardas());
+            pavardeField.setText(selectedStudent.getPavarde());
+            grupeField.setText(selectedStudent.getGrupe());
+        }
+    }
+    @FXML
+    public void editStudent() {
+        Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
+        if (selectedStudent != null) {
+            selectedStudent.setVardas(vardasField.getText());
+            selectedStudent.setPavarde(pavardeField.getText());
+            selectedStudent.setGrupe(grupeField.getText());
+
+            tableView.refresh(); // Atnaujina lentelę
+
+            StudentFileManager.updateStudentFile(studentList); // Atnaujina duomenis faile
+
             vardasField.clear();
             pavardeField.clear();
             grupeField.clear();
+        } else {
+            System.out.println("Pasirink studentą prieš redaguojant.");
         }
     }
+
 }
