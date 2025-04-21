@@ -31,16 +31,26 @@ public class HelloController {
     @FXML private TableView<Attendance> attendanceTable;
     @FXML private TableColumn<Attendance, String> dateColumn;
     @FXML private TableColumn<Attendance, String> statusColumn;
+    @FXML private TableColumn<Attendance, String> nameColumn;
+    @FXML private TableColumn<Attendance, String> surnameColumn;
+    @FXML private TableColumn<Attendance, String> groupColumn;
 
 
 
     private ObservableList<Student> studentList = FXCollections.observableArrayList();
+    private ObservableList<Attendance> attendanceList = FXCollections.observableArrayList();
+
 
     @FXML
     public void initialize() {
         vardasColumn.setCellValueFactory(new PropertyValueFactory<>("vardas"));
         pavardeColumn.setCellValueFactory(new PropertyValueFactory<>("pavarde"));
         grupeColumn.setCellValueFactory(new PropertyValueFactory<>("grupe"));
+
+        // Lankomumo lentelės duomenų susiejimas
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
+        groupColumn.setCellValueFactory(new PropertyValueFactory<>("group"));
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
@@ -64,22 +74,18 @@ public class HelloController {
         String grupe = grupeField.getText();
 
         if (!vardas.isEmpty() && !pavarde.isEmpty() && !grupe.isEmpty()) {
-            if (!studentExists(vardas, pavarde, grupe)) {
-                Student student = new Student(vardas, pavarde, grupe);
-                studentList.add(student);
-                tableView.refresh();
+            Student student = new Student(vardas, pavarde, grupe);
+            studentList.add(student);
+            tableView.refresh();
 
-                // Čia buvo klaida! Pridėk grupę kaip antrą argumentą
-                StudentFileManager.saveStudent(student, grupe);
+            StudentFileManager.saveStudent(student); // Taisyta!
 
-                vardasField.clear();
-                pavardeField.clear();
-                grupeField.clear();
-            } else {
-                System.out.println("Šis studentas jau yra įrašytas.");
-            }
+            vardasField.clear();
+            pavardeField.clear();
+            grupeField.clear();
         }
     }
+
     @FXML
     public void markAttendance() {
         Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
@@ -98,7 +104,7 @@ public class HelloController {
         if (selectedDate != null) {
             List<Attendance> attendanceList = AttendanceFileManager.loadAttendanceByDate(selectedDate);
 
-            System.out.println("Lankomumo įrašai rasti: " + attendanceList.size());
+            System.out.println("Rasta įrašų: " + attendanceList.size());
 
             attendanceTable.setItems(FXCollections.observableArrayList(attendanceList));
             attendanceTable.refresh();

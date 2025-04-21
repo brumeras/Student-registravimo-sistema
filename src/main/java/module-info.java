@@ -3,7 +3,8 @@ module org.example.studentai {
     requires javafx.fxml;
 
     opens org.example.studentai to javafx.fxml;
-    opens StudentuInformacija to javafx.base; // Svarbu, kad JavaFX galėtų pasiekti Student klasę
+    opens StudentuInformacija to javafx.base;
+    opens Lankomumas to javafx.base;
 
     exports org.example.studentai;
 }

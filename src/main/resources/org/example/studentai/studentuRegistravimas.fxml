@@ -43,7 +43,7 @@
                </font></Button>
             <Button layoutX="20.0" layoutY="120.0" onAction="#markAttendance" text="Pažymėti atvykimą" />
             <Button layoutX="160.0" layoutY="120.0" onAction="#loadAttendanceByDate" text="Rodyti dienos sąrašą" />
-            <DatePicker fx:id="datePicker" layoutX="671.0" layoutY="402.0" />
+            <DatePicker fx:id="datePicker" layoutX="430.0" layoutY="280.0" />
 
             <TextField fx:id="vardasField" layoutX="134.0" layoutY="13.0" />
             <TextField fx:id="pavardeField" layoutX="296.0" layoutY="13.0" />
@@ -72,14 +72,26 @@
                   <TableColumn fx:id="grupeColumn" prefWidth="60.79998779296875" text="Grupė" />
                </columns>
             </TableView>
-            <TableView fx:id="attendanceTable" layoutX="557.0" layoutY="80.0" prefHeight="319.0" prefWidth="299.0">
+            <TableView fx:id="attendanceTable" layoutX="304.0" layoutY="80.0" prefHeight="191.0" prefWidth="401.0">
                <columns>
+                  <TableColumn fx:id="nameColumn" text="Vardas" />
+                  <TableColumn fx:id="surnameColumn" text="Pavardė" />
+                  <TableColumn fx:id="groupColumn" text="Grupė" />
                   <TableColumn fx:id="dateColumn" text="Data" />
-                  <TableColumn fx:id="statusColumn" text="Statusas" />
+                  <TableColumn fx:id="statusColumn" text="Būsena" />
                </columns>
             </TableView>
-            <Button layoutX="20.0" layoutY="120.0" text="Pažymėti atvykimą" onAction="#markAttendance"/>
 
+
+            <Button layoutX="304.0" layoutY="280.0" onAction="#markAttendance" text="Pažymėti atvykimą">
+               <font>
+                  <Font name="Cambria" size="13.0" />
+               </font></Button>
+
+            <Button layoutX="430.0" layoutY="316.0" onAction="#loadAttendanceByDate" prefHeight="25.0" prefWidth="175.0" text="Rodyti dienos sąrašą">
+               <font>
+                  <Font name="Cambria" size="13.0" />
+               </font></Button>
 
          </children>
       </Pane>

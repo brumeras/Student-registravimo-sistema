@@ -1,7 +1,5 @@
 package StudentuInformacija;
 
-import StudentuInformacija.Student;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,15 +12,14 @@ public class StudentFileManager {
 
     private static final String FILE_NAME = "students.txt";
 
-    public static void saveStudent(Student student, String group) {
-        try (FileWriter fileWriter = new FileWriter(FILE_NAME, true);
+    public static void saveStudent(Student student) {
+        try (FileWriter fileWriter = new FileWriter("students.txt", true);
              PrintWriter printWriter = new PrintWriter(fileWriter)) {
-            printWriter.println(group + "," + student.getVardas() + "," + student.getPavarde());
+            printWriter.println(student.getVardas() + "," + student.getPavarde() + "," + student.getGrupe()); // Taisyklinga!
         } catch (IOException e) {
-            System.out.println("Klaida įrašant studentą į failą: " + e.getMessage());
+            System.out.println("Klaida įrašant studentą: " + e.getMessage());
         }
     }
-
 
     // Metodas, skirtas nuskaityti visus studentus iš failo
     public static List<Student> loadStudents() {
