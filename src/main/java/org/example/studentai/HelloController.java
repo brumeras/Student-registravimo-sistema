@@ -1,15 +1,19 @@
 package org.example.studentai;
 
+import Lankomumas.Attendance;
+import Lankomumas.AttendanceFileManager;
 import StudentuInformacija.Student;
 import StudentuInformacija.StudentFileManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +27,11 @@ public class HelloController {
     @FXML private TableColumn<Student, String> pavardeColumn;
     @FXML private TableColumn<Student, String> grupeColumn;
     @FXML private TextField groupField;
+    @FXML private DatePicker datePicker;
+    @FXML private TableView<Attendance> attendanceTable;
+    @FXML private TableColumn<Attendance, String> dateColumn;
+    @FXML private TableColumn<Attendance, String> statusColumn;
+
 
 
     private ObservableList<Student> studentList = FXCollections.observableArrayList();
@@ -32,9 +41,12 @@ public class HelloController {
         vardasColumn.setCellValueFactory(new PropertyValueFactory<>("vardas"));
         pavardeColumn.setCellValueFactory(new PropertyValueFactory<>("pavarde"));
         grupeColumn.setCellValueFactory(new PropertyValueFactory<>("grupe"));
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         tableView.setItems(studentList);
     }
+
     private boolean studentExists(String vardas, String pavarde, String grupe) {
         for (Student student : studentList) {
             if (student.getVardas().equals(vardas) && student.getPavarde().equals(pavarde) && student.getGrupe().equals(grupe)) {
@@ -68,7 +80,32 @@ public class HelloController {
             }
         }
     }
+    @FXML
+    public void markAttendance() {
+        Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
+        LocalDate selectedDate = datePicker.getValue();
 
+        if (selectedStudent != null && selectedDate != null) {
+            AttendanceFileManager.saveAttendance(selectedDate, selectedStudent.getVardas(), selectedStudent.getPavarde(), selectedStudent.getGrupe(), "Atvyko");
+            System.out.println("Lankomumas pažymėtas!");
+        } else {
+            System.out.println("Pasirink studentą ir datą.");
+        }
+    }
+    @FXML
+    public void loadAttendanceByDate() {
+        LocalDate selectedDate = datePicker.getValue();
+        if (selectedDate != null) {
+            List<Attendance> attendanceList = AttendanceFileManager.loadAttendanceByDate(selectedDate);
+
+            System.out.println("Lankomumo įrašai rasti: " + attendanceList.size());
+
+            attendanceTable.setItems(FXCollections.observableArrayList(attendanceList));
+            attendanceTable.refresh();
+        } else {
+            System.out.println("Pasirink datą.");
+        }
+    }
 
     @FXML
     public void loadStudentList() {
@@ -118,6 +155,5 @@ public class HelloController {
         studentList.setAll(filteredStudents);
         tableView.refresh();
     }
-
 
 }

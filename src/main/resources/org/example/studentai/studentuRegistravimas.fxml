@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -10,63 +11,76 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="480.0" prefWidth="640.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.studentai.HelloController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.studentai.HelloController">
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
    </padding>
    <children>
+      <Label text="Studentų registravimo sistema">
+         <font>
+            <Font name="Cambria" size="18.0" />
+         </font>
+      </Label>
       <Pane prefHeight="494.0" prefWidth="566.0">
          <children>
-            <Label layoutX="191.0" layoutY="-11.0" text="Studentų registravimo sistema">
-               <font>
-                  <Font name="Cambria" size="18.0" />
-               </font>
-            </Label>
-            <Button layoutX="14.0" layoutY="42.0" mnemonicParsing="false" onAction="#addStudent" prefHeight="25.0" prefWidth="111.0" text="Pridėti studentą">
+            <Button layoutX="5.0" layoutY="13.0" mnemonicParsing="false" onAction="#addStudent" prefHeight="25.0" prefWidth="111.0" text="Pridėti studentą">
                <font>
                   <Font name="Cambria" size="13.0" />
                </font>
             </Button>
-            <Button layoutX="14.0" layoutY="80.0" onAction="#loadStudentList" text="Rodyti sąrašą">
+            <Button layoutX="5.0" layoutY="46.0" onAction="#loadStudentList" prefHeight="25.0" prefWidth="111.0" text="Rodyti sąrašą">
                <font>
                   <Font name="Cambria" size="13.0" />
                </font></Button>
-            <Button layoutX="428.0" layoutY="80.0" onAction="#filterByGroup" text="Rodyti grupę">
+            <Button layoutX="115.0" layoutY="414.0" onAction="#filterByGroup" text="Rodyti grupę">
                <font>
                   <Font name="Cambria" size="13.0" />
                </font></Button>
-            <TextField fx:id="groupField" layoutX="309.0" layoutY="80.0" prefHeight="25.0" prefWidth="105.0" />
-            <Button layoutX="112.0" layoutY="80.0" onAction="#editStudent" prefHeight="25.0" prefWidth="174.0" text="Redaguoti pasirinktą studentą">
+            <TextField fx:id="groupField" layoutY="415.0" prefHeight="25.0" prefWidth="105.0" />
+            <Button layoutX="121.0" layoutY="46.0" onAction="#editStudent" prefHeight="25.0" prefWidth="175.0" text="Redaguoti pasirinktą studentą">
                <font>
                   <Font name="Cambria" size="12.0" />
                </font></Button>
-            <TextField fx:id="vardasField" layoutX="143.0" layoutY="42.0" />
-            <TextField fx:id="pavardeField" layoutX="309.0" layoutY="42.0" />
-            <Label layoutX="199.0" layoutY="25.0" text="Vardas">
+            <Button layoutX="20.0" layoutY="120.0" onAction="#markAttendance" text="Pažymėti atvykimą" />
+            <Button layoutX="160.0" layoutY="120.0" onAction="#loadAttendanceByDate" text="Rodyti dienos sąrašą" />
+            <DatePicker fx:id="datePicker" layoutX="671.0" layoutY="402.0" />
+
+            <TextField fx:id="vardasField" layoutX="134.0" layoutY="13.0" />
+            <TextField fx:id="pavardeField" layoutX="296.0" layoutY="13.0" />
+            <Label layoutX="190.0" text="Vardas">
                <font>
-                  <Font name="Cambria" size="14.0" />
+                  <Font name="Cambria" size="12.0" />
                </font>
             </Label>
-            <Label layoutX="346.0" layoutY="25.0" text="Pavardė">
+            <Label layoutX="349.0" text="Pavardė">
                <font>
-                  <Font name="Cambria" size="14.0" />
+                  <Font name="Cambria" size="12.0" />
                </font>
             </Label>
-            <TextField fx:id="grupeField" layoutX="470.0" layoutY="42.0" prefHeight="25.0" prefWidth="105.0" />
-            <Label layoutX="478.0" layoutY="25.0" text="Grupė">
+            <TextField fx:id="grupeField" layoutX="452.0" layoutY="13.0" prefHeight="25.0" prefWidth="105.0" />
+            <Label layoutX="486.0" layoutY="-1.0" text="Grupė">
                <font>
-                  <Font name="Cambria" size="14.0" />
+                  <Font name="Cambria" size="12.0" />
                </font>
             </Label>
 
             <!-- Lentelė studentų sąrašui -->
-            <TableView fx:id="tableView" layoutX="14.0" layoutY="108.0" onMouseClicked="#selectStudent" prefHeight="319.0" prefWidth="273.0">
+            <TableView fx:id="tableView" layoutX="5.0" layoutY="80.0" onMouseClicked="#selectStudent" prefHeight="319.0" prefWidth="292.0">
                <columns>
                   <TableColumn fx:id="vardasColumn" prefWidth="103.199951171875" text="Vardas" />
                   <TableColumn fx:id="pavardeColumn" prefWidth="108.800048828125" text="Pavardė" />
                   <TableColumn fx:id="grupeColumn" prefWidth="60.79998779296875" text="Grupė" />
                </columns>
             </TableView>
+            <TableView fx:id="attendanceTable" layoutX="557.0" layoutY="80.0" prefHeight="319.0" prefWidth="299.0">
+               <columns>
+                  <TableColumn fx:id="dateColumn" text="Data" />
+                  <TableColumn fx:id="statusColumn" text="Statusas" />
+               </columns>
+            </TableView>
+            <Button layoutX="20.0" layoutY="120.0" text="Pažymėti atvykimą" onAction="#markAttendance"/>
+
+
          </children>
       </Pane>
    </children>
