@@ -38,16 +38,15 @@ public class HelloController {
     @FXML private TableColumn<Attendance, String> groupColumn;
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
-
-
-
-    private ObservableList<Student> studentList = FXCollections.observableArrayList();
-    private ObservableList<Attendance> attendanceList = FXCollections.observableArrayList();
     @FXML private TextField studentSearchField;
     @FXML private TextField groupSearchField;
     @FXML private TableView<LocalDate> daysTable;
     @FXML private TableColumn<LocalDate, String> daysColumn;
+
+    private ObservableList<Student> studentList = FXCollections.observableArrayList();
+    private ObservableList<Attendance> attendanceList = FXCollections.observableArrayList();
     private ObservableList<LocalDate> filledDaysList = FXCollections.observableArrayList();
+    private ObservableList<Student> originalStudentList = FXCollections.observableArrayList();
 
 
     @FXML
@@ -67,16 +66,6 @@ public class HelloController {
         daysColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().toString()));
         daysTable.setItems(filledDaysList);
     }
-
-    private boolean studentExists(String vardas, String pavarde, String grupe) {
-        for (Student student : studentList) {
-            if (student.getVardas().equals(vardas) && student.getPavarde().equals(pavarde) && student.getGrupe().equals(grupe)) {
-                return true; // Studentas jau egzistuoja
-            }
-        }
-        return false; // Studentas dar neįrašytas
-    }
-
 
     @FXML
     public void addStudent() {
@@ -109,31 +98,47 @@ public class HelloController {
             System.out.println("Pasirink studentą ir datą.");
         }
     }
+
     @FXML
     public void loadAttendanceByDate() {
         LocalDate selectedDate = datePicker.getValue();
         if (selectedDate != null) {
+            // Iškviečiame metodą, kad atnaujintume lankomumo įrašus pagal pasirinktą datą ir studento duomenis
             List<Attendance> loadedList = AttendanceFileManager.loadAttendanceByDate(selectedDate);
 
-            System.out.println("🔎 Rasta įrašų: " + loadedList.size());
+            // Filtruojame tik tuos įrašus, kurie atitinka redaguotus studentus
+            List<Attendance> filteredAttendance = new ArrayList<>();
+
             for (Attendance att : loadedList) {
-                System.out.println("✅ Studentas: " + att.getName() + ", Grupė: " + att.getGroup());
+                for (Student student : studentList) {
+                    if (student.getVardas().equals(att.getName()) &&
+                            student.getPavarde().equals(att.getSurname()) &&
+                            student.getGrupe().equals(att.getGroup())) {
+                        filteredAttendance.add(att);
+                    }
+                }
             }
 
-            this.attendanceList.setAll(loadedList); // ATNAUJINTI DUOMENIS!
+            // Atnaujiname lentelę su filtruotais įrašais
+            this.attendanceList.setAll(filteredAttendance);
             attendanceTable.setItems(attendanceList);
             attendanceTable.refresh();
+
+            System.out.println("🔎 Rasta įrašų: " + filteredAttendance.size());
         } else {
             System.out.println("⚠️ Pasirink datą.");
         }
     }
 
-
     @FXML
     public void loadStudentList() {
-        studentList.setAll(StudentFileManager.loadStudents());
+        List<Student> students = StudentFileManager.loadStudents();
+        originalStudentList.setAll(students);
+        studentList.setAll(students);  // rodomas sąrašas
+        tableView.setItems(studentList);
         tableView.refresh();
     }
+
 
     @FXML
     public void selectStudent() {
@@ -144,39 +149,98 @@ public class HelloController {
             grupeField.setText(selectedStudent.getGrupe());
         }
     }
+
     @FXML
     public void editStudent() {
         Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
         if (selectedStudent != null) {
+            // Išsaugoti senus duomenis (kad galėtume rasti įrašus)
+            String oldVardas = selectedStudent.getVardas();
+            String oldPavarde = selectedStudent.getPavarde();
+            String oldGrupe = selectedStudent.getGrupe();
+
+            // Pakeisti studento objektą su naujais duomenimis iš laukų
             selectedStudent.setVardas(vardasField.getText());
             selectedStudent.setPavarde(pavardeField.getText());
             selectedStudent.setGrupe(grupeField.getText());
 
-            tableView.refresh(); // Atnaujina lentelę
+            // Atnaujinti studentų failą (išsaugoti visus pakeistus studentus)
+            StudentFileManager.updateStudentFile(studentList);
 
-            StudentFileManager.updateStudentFile(studentList); // Atnaujina duomenis faile
+            // Atnaujinti lankomumo įrašus
+            List<Attendance> attendanceList = AttendanceFileManager.loadAllAttendance();
+            List<Attendance> updatedAttendance = new ArrayList<>();
 
+            for (Attendance att : attendanceList) {
+                if (att.getName().equals(oldVardas) &&
+                        att.getSurname().equals(oldPavarde) &&
+                        att.getGroup().equals(oldGrupe)) {
+
+                    // Pakeisti lankomumo įrašo duomenis pagal naujus studento duomenis
+                    att.setName(selectedStudent.getVardas());
+                    att.setSurname(selectedStudent.getPavarde());
+                    att.setGroup(selectedStudent.getGrupe());
+                }
+                updatedAttendance.add(att);
+            }
+
+            // Išsaugoti atnaujintus lankomumo įrašus į failą
+            AttendanceFileManager.saveAllAttendance(updatedAttendance);
+
+            // Atnaujinti lentelę, kad matytumėte pakeistus duomenis
+            tableView.refresh();
+
+            // Išvalyti laukus po redagavimo
             vardasField.clear();
             pavardeField.clear();
             grupeField.clear();
+
+            System.out.println("✅ Studentas ir lankomumo įrašai atnaujinti.");
         } else {
-            System.out.println("Pasirink studentą prieš redaguojant.");
+            System.out.println("⚠️ Pasirink studentą prieš redaguojant.");
         }
     }
+
+
+    private void updateAttendanceList(String vardas, String pavarde, String grupe) {
+        // Naudojame visus lankomumo įrašus ir filtruojame pagal studento duomenis
+        List<Attendance> allAttendance = AttendanceFileManager.loadAllAttendance();
+        List<Attendance> filteredAttendance = allAttendance.stream()
+                .filter(att -> att.getName().equalsIgnoreCase(vardas) &&
+                        att.getSurname().equalsIgnoreCase(pavarde) &&
+                        att.getGroup().equalsIgnoreCase(grupe))
+                .toList();
+
+        attendanceList.setAll(filteredAttendance); // Atverčiame tik tuos įrašus, kurie atitinka redaguotus duomenis
+        attendanceTable.setItems(attendanceList); // Atnaujiname lentelę
+        attendanceTable.refresh(); // Užtikriname, kad lentelė atnaujinta
+    }
+
     @FXML
     public void filterByGroup() {
-        String selectedGroup = groupField.getText(); // Grupės pavadinimas iš vartotojo įvesties
-        List<Student> filteredStudents = new ArrayList<>();
+        String selectedGroup = groupField.getText().trim();
+        if (!selectedGroup.isEmpty()) {
+            List<Student> allStudents = StudentFileManager.loadStudents(); // arba naudoti originalStudentList
+            List<Student> filteredStudents = new ArrayList<>();
 
-        for (Student student : StudentFileManager.loadStudents()) {
-            if (student.getGrupe().equals(selectedGroup)) {
-                filteredStudents.add(student);
+            for (Student student : allStudents) {
+                if (student.getGrupe().trim().equals(selectedGroup)) {
+                    filteredStudents.add(student);
+                }
             }
-        }
 
-        studentList.setAll(filteredStudents);
-        tableView.refresh();
+            studentList.setAll(filteredStudents);
+            tableView.setItems(studentList);
+            tableView.refresh();
+
+            System.out.println("✅ Rasti " + filteredStudents.size() + " įrašai grupėje " + selectedGroup);
+        } else {
+            System.out.println("⚠️ Įveskite grupės pavadinimą.");
+        }
     }
+
+
+
     @FXML
     public void filterByStudent() {
         String input = studentSearchField.getText().trim();
@@ -204,7 +268,6 @@ public class HelloController {
             System.out.println("⚠️ Įveskite studento vardą ir pavardę.");
         }
     }
-
 
     public void filterAttendanceByGroup() {
         String groupName = groupSearchField.getText();
@@ -253,4 +316,16 @@ public class HelloController {
         }
     }
 
+    public void updateFilteredStudentList() {
+        // Po redagavimo atlikti filtravimą (jei reikia) pagal grupę ar studentą
+        if (!groupSearchField.getText().isEmpty()) {
+            filterByGroup();
+        } else if (!studentSearchField.getText().isEmpty()) {
+            filterByStudent();
+        } else {
+            studentList.setAll(StudentFileManager.loadStudents());
+            tableView.setItems(studentList);
+            tableView.refresh();
+        }
+    }
 }

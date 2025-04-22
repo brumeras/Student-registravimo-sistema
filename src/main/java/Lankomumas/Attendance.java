@@ -17,5 +17,18 @@ public class Attendance extends AbstractAttendance {
     public String getName() { return name; }
     public String getSurname() { return surname; }
     public String getGroup() { return group; }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
 }
 

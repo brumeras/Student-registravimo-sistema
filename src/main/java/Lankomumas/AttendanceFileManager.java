@@ -146,6 +146,23 @@ public class AttendanceFileManager {
 
         return filteredList;
     }
+    public static void saveAllAttendance(List<Attendance> attendanceList) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("attendance.txt", false))) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            for (Attendance attendance : attendanceList) {
+                String line = attendance.getName() + "," +
+                        attendance.getSurname() + "," +
+                        attendance.getGroup() + "," +
+                        attendance.getDate().format(formatter) + "," +
+                        attendance.getStatus();
+                writer.println(line);
+            }
+            System.out.println("✅ Visi lankomumo įrašai atnaujinti.");
+        } catch (IOException e) {
+            System.out.println("❌ Klaida įrašant visus lankomumo duomenis: " + e.getMessage());
+        }
+    }
+
 
 
 }
