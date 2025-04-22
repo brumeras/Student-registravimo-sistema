@@ -25,7 +25,6 @@
             <artifactId>javafx-fxml</artifactId>
             <version>17.0.6</version>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -38,6 +37,46 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext-kernel</artifactId>
+                <version>9.1.0</version>
+                <scope>system</scope>
+                <systemPath>C:/Users/semil/Desktop/Studentai/libs/iText-Core-9.1.0-only-jars/kernel-9.1.0.jar</systemPath>
+            </dependency>
+
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext-layout</artifactId>
+                <version>9.1.0</version>
+                <scope>system</scope>
+                <systemPath>C:/Users/semil/Desktop/Studentai/libs/iText-Core-9.1.0-only-jars/layout-9.1.0.jar</systemPath>
+            </dependency>
+
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext-io</artifactId>
+                <version>9.1.0</version>
+                <scope>system</scope>
+                <systemPath>C:/Users/semil/Desktop/Studentai/libs/iText-Core-9.1.0-only-jars/io-9.1.0.jar</systemPath>
+            </dependency>
+
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext-commons</artifactId>
+                <version>9.1.0</version>
+                <scope>system</scope>
+                <systemPath>C:/Users/semil/Desktop/Studentai/libs/iText-Core-9.1.0-only-jars/commons-9.1.0.jar</systemPath>
+            </dependency>
+
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itext-sign</artifactId>
+                <version>9.1.0</version>
+                <scope>system</scope>
+                <systemPath>C:/Users/semil/Desktop/Studentai/libs/iText-Core-9.1.0-only-jars/sign-9.1.0.jar</systemPath>
+            </dependency>
+
     </dependencies>
 
     <build>
@@ -47,8 +86,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>23</source>
-                    <target>23</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
