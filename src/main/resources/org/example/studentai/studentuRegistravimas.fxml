@@ -102,6 +102,9 @@
                   <TableColumn fx:id="daysColumn" text="Užpildytos dienos" />
                </columns>
             </TableView>
+            <DatePicker fx:id="startDatePicker" layoutX="565.0" layoutY="350.0" />
+            <DatePicker fx:id="endDatePicker" layoutX="565.0" layoutY="386.0" />
+            <Button layoutX="565.0" layoutY="311.0" onAction="#filterByDateRange" text="Filtruoti intervalą" />
 
          </children>
       </Pane>

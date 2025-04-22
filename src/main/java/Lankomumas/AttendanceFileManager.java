@@ -69,8 +69,10 @@ public class AttendanceFileManager {
                 String[] data = line.split(",");
                 if (data.length == 5) {
                     LocalDate date = LocalDate.parse(data[3], formatter);
-                    attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
-                    System.out.println("✅ Pridėta į sąrašą: " + data[0] + " (" + data[2] + ")");
+                    if (date.equals(selectedDate)) {
+                        attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
+                        System.out.println("✅ Pridėta į sąrašą: " + data[0] + " (" + data[2] + ")");
+                    }
                 }
             }
         } catch (Exception e) {
@@ -80,6 +82,7 @@ public class AttendanceFileManager {
         System.out.println("🔎 Iš viso rastų lankomumo įrašų: " + attendanceList.size());
         return attendanceList;
     }
+
 
 
     public static List<LocalDate> loadFilledDays() {
@@ -121,8 +124,8 @@ public class AttendanceFileManager {
         }
         return attendanceList;
     }
-    public static List<Attendance> loadAttendanceByDateRange() {
-        List<Attendance> attendanceList = new ArrayList<>();
+    public static List<Attendance> loadAttendanceByDateRange(LocalDate startDate, LocalDate endDate) {
+        List<Attendance> filteredList = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try (BufferedReader reader = new BufferedReader(new FileReader("attendance.txt"))) {
@@ -131,17 +134,18 @@ public class AttendanceFileManager {
                 String[] data = line.split(",");
                 if (data.length == 5) {
                     LocalDate date = LocalDate.parse(data[3], formatter);
-                    attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
+                    if ((date.isEqual(startDate) || date.isAfter(startDate)) &&
+                            (date.isEqual(endDate) || date.isBefore(endDate))) {
+                        filteredList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
+                    }
                 }
             }
         } catch (Exception e) {
             System.out.println("❌ Klaida skaitant lankomumo failą: " + e.getMessage());
         }
 
-        return attendanceList;
+        return filteredList;
     }
-
-
 
 
 }

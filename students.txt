@@ -1,7 +1,7 @@
-Emilija,Sankauskaitė,3
-Augustinas,Augustas,1
+,,
 Eglė,Eglaitė,3
 Jonas,Jonaitis,2
 Kasparas,Kasperaitis,2
-Ugnius,Ugniauskas,1
 Labas,Labutaits,3
+Emilija,Sankauskaitė,5
+Ugnius,Ugniauskas,1

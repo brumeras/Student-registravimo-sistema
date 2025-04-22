@@ -36,6 +36,8 @@ public class HelloController {
     @FXML private TableColumn<Attendance, String> nameColumn;
     @FXML private TableColumn<Attendance, String> surnameColumn;
     @FXML private TableColumn<Attendance, String> groupColumn;
+    @FXML private DatePicker startDatePicker;
+    @FXML private DatePicker endDatePicker;
 
 
 
@@ -185,7 +187,7 @@ public class HelloController {
                 String vardas = parts[0];
                 String pavarde = parts[1];
 
-                List<Attendance> allAttendance = AttendanceFileManager.loadAttendanceByDateRange();
+                List<Attendance> allAttendance = AttendanceFileManager.loadAllAttendance();
 
                 List<Attendance> filteredList = allAttendance.stream()
                         .filter(att -> att.getName().equalsIgnoreCase(vardas)
@@ -225,12 +227,30 @@ public class HelloController {
         }
     }
 
-
     @FXML
     public void loadFilledDays() {
         List<LocalDate> filledDays = AttendanceFileManager.loadFilledDays();
         filledDaysList.setAll(filledDays);
         daysTable.refresh();
+    }
+
+    @FXML
+    public void filterByDateRange() {
+        LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
+
+        if (startDate != null && endDate != null && !endDate.isBefore(startDate)) {
+            List<Attendance> filteredList = AttendanceFileManager.loadAttendanceByDateRange(startDate, endDate);
+
+            System.out.println("📆 Intervalas: " + startDate + " - " + endDate);
+            System.out.println("🔍 Rasta " + filteredList.size() + " įrašų šiame intervale.");
+
+            attendanceList.setAll(filteredList);
+            attendanceTable.setItems(attendanceList);
+            attendanceTable.refresh();
+        } else {
+            System.out.println("⚠️ Pasirink tinkamą datų intervalą.");
+        }
     }
 
 }
