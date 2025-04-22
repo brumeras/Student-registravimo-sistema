@@ -4,6 +4,7 @@ import Lankomumas.Attendance;
 import Lankomumas.AttendanceFileManager;
 import StudentuInformacija.Student;
 import StudentuInformacija.StudentFileManager;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,11 @@ public class HelloController {
 
     private ObservableList<Student> studentList = FXCollections.observableArrayList();
     private ObservableList<Attendance> attendanceList = FXCollections.observableArrayList();
+    @FXML private TextField studentSearchField;
+    @FXML private TextField groupSearchField;
+    @FXML private TableView<LocalDate> daysTable;
+    @FXML private TableColumn<LocalDate, String> daysColumn;
+    private ObservableList<LocalDate> filledDaysList = FXCollections.observableArrayList();
 
 
     @FXML
@@ -55,6 +62,8 @@ public class HelloController {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         tableView.setItems(studentList);
+        daysColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().toString()));
+        daysTable.setItems(filledDaysList);
     }
 
     private boolean studentExists(String vardas, String pavarde, String grupe) {
@@ -102,16 +111,21 @@ public class HelloController {
     public void loadAttendanceByDate() {
         LocalDate selectedDate = datePicker.getValue();
         if (selectedDate != null) {
-            List<Attendance> attendanceList = AttendanceFileManager.loadAttendanceByDate(selectedDate);
+            List<Attendance> loadedList = AttendanceFileManager.loadAttendanceByDate(selectedDate);
 
-            System.out.println("Rasta įrašų: " + attendanceList.size());
+            System.out.println("🔎 Rasta įrašų: " + loadedList.size());
+            for (Attendance att : loadedList) {
+                System.out.println("✅ Studentas: " + att.getName() + ", Grupė: " + att.getGroup());
+            }
 
-            attendanceTable.setItems(FXCollections.observableArrayList(attendanceList));
+            this.attendanceList.setAll(loadedList); // ATNAUJINTI DUOMENIS!
+            attendanceTable.setItems(attendanceList);
             attendanceTable.refresh();
         } else {
-            System.out.println("Pasirink datą.");
+            System.out.println("⚠️ Pasirink datą.");
         }
     }
+
 
     @FXML
     public void loadStudentList() {
@@ -160,6 +174,63 @@ public class HelloController {
 
         studentList.setAll(filteredStudents);
         tableView.refresh();
+    }
+    @FXML
+    public void filterByStudent() {
+        String input = studentSearchField.getText().trim();
+        if (!input.isEmpty()) {
+            String[] parts = input.split("\\s+"); // Padalina pagal tarpą
+
+            if (parts.length >= 2) {
+                String vardas = parts[0];
+                String pavarde = parts[1];
+
+                List<Attendance> allAttendance = AttendanceFileManager.loadAttendanceByDateRange();
+
+                List<Attendance> filteredList = allAttendance.stream()
+                        .filter(att -> att.getName().equalsIgnoreCase(vardas)
+                                && att.getSurname().equalsIgnoreCase(pavarde))
+                        .toList();
+
+                System.out.println("✅ Rasta " + filteredList.size() + " įrašų studentui " + vardas + " " + pavarde);
+                attendanceTable.setItems(FXCollections.observableArrayList(filteredList));
+                attendanceTable.refresh();
+            } else {
+                System.out.println("⚠️ Įveskite vardą ir pavardę, pvz.: „Eglė Eglaitė“");
+            }
+        } else {
+            System.out.println("⚠️ Įveskite studento vardą ir pavardę.");
+        }
+    }
+
+
+    public void filterAttendanceByGroup() {
+        String groupName = groupSearchField.getText();
+        if (!groupName.isEmpty()) {
+            System.out.println("🔍 Filtruojama grupė: " + groupName);
+
+            // Naudojame naują metodą, kad visada turėtume visus įrašus
+            List<Attendance> allAttendance = AttendanceFileManager.loadAllAttendance();
+
+            List<Attendance> filteredList = allAttendance.stream()
+                    .filter(attendance -> attendance.getGroup().trim().equalsIgnoreCase(groupName.trim()))
+                    .toList();
+
+            System.out.println("✅ Rasti " + filteredList.size() + " įrašai grupėje " + groupName);
+
+            attendanceTable.setItems(FXCollections.observableArrayList(filteredList));
+            attendanceTable.refresh();
+        } else {
+            System.out.println("⚠️ Įveskite grupės pavadinimą.");
+        }
+    }
+
+
+    @FXML
+    public void loadFilledDays() {
+        List<LocalDate> filledDays = AttendanceFileManager.loadFilledDays();
+        filledDaysList.setAll(filledDays);
+        daysTable.refresh();
     }
 
 }

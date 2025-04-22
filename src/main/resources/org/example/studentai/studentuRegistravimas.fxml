@@ -88,10 +88,20 @@
                   <Font name="Cambria" size="13.0" />
                </font></Button>
 
-            <Button layoutX="430.0" layoutY="316.0" onAction="#loadAttendanceByDate" prefHeight="25.0" prefWidth="175.0" text="Rodyti dienos sąrašą">
+            <Button layoutX="618.0" layoutY="280.0" onAction="#loadAttendanceByDate" prefHeight="25.0" prefWidth="175.0" text="Rodyti dienos sąrašą">
                <font>
                   <Font name="Cambria" size="13.0" />
                </font></Button>
+            <TextField fx:id="studentSearchField" layoutX="722.0" layoutY="13.0" prefHeight="25.0" prefWidth="139.0" />
+            <Button layoutX="572.0" layoutY="13.0" onAction="#filterByStudent" text="Filtruoti pagal studentą" />
+            <TextField fx:id="groupSearchField" layoutX="723.0" layoutY="46.0" prefHeight="25.0" prefWidth="139.0" />
+            <Button layoutX="572.0" layoutY="46.0" onAction="#filterAttendanceByGroup" prefHeight="25.0" prefWidth="139.0" text="Filtruoti pagal grupę" />
+            <Button layoutX="307.0" layoutY="455.0" onAction="#loadFilledDays" text="Rodyti užpildytas dienas" />
+            <TableView fx:id="daysTable" layoutX="307.0" layoutY="311.0" prefHeight="128.0" prefWidth="247.0">
+               <columns>
+                  <TableColumn fx:id="daysColumn" text="Užpildytos dienos" />
+               </columns>
+            </TableView>
 
          </children>
       </Pane>

@@ -5,6 +5,7 @@ import StudentuInformacija.Student;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.BufferedReader;
@@ -59,21 +60,88 @@ public class AttendanceFileManager {
     }
     public static List<Attendance> loadAttendanceByDate(LocalDate selectedDate) {
         List<Attendance> attendanceList = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("attendance.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("📂 Iš failo nuskaityta: " + line);
+                String[] data = line.split(",");
+                if (data.length == 5) {
+                    LocalDate date = LocalDate.parse(data[3], formatter);
+                    attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
+                    System.out.println("✅ Pridėta į sąrašą: " + data[0] + " (" + data[2] + ")");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Klaida skaitant lankomumo failą: " + e.getMessage());
+        }
+
+        System.out.println("🔎 Iš viso rastų lankomumo įrašų: " + attendanceList.size());
+        return attendanceList;
+    }
+
+
+    public static List<LocalDate> loadFilledDays() {
+        List<LocalDate> filledDays = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("attendance.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length == 5) {
                     LocalDate date = LocalDate.parse(data[3]);
-                    if (date.equals(selectedDate)) {
-                        attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4])); // Vardas, Pavardė, Grupė, Data, Būsena
+                    if (!filledDays.contains(date)) {
+                        filledDays.add(date);
                     }
                 }
             }
         } catch (IOException e) {
-            System.out.println("Klaida skaitant lankomumo failą: " + e.getMessage());
+            System.out.println("❌ Klaida skaitant lankomumo failą: " + e.getMessage());
+        }
+
+        System.out.println("📅 Užpildytos dienos: " + filledDays);
+        return filledDays;
+    }
+
+    public static List<Attendance> loadAllAttendance() {
+        List<Attendance> attendanceList = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("attendance.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 5) {
+                    LocalDate date = LocalDate.parse(data[3], formatter);
+                    attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Klaida skaitant failą: " + e.getMessage());
         }
         return attendanceList;
     }
+    public static List<Attendance> loadAttendanceByDateRange() {
+        List<Attendance> attendanceList = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("attendance.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 5) {
+                    LocalDate date = LocalDate.parse(data[3], formatter);
+                    attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Klaida skaitant lankomumo failą: " + e.getMessage());
+        }
+
+        return attendanceList;
+    }
+
+
+
 
 }
