@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -328,4 +329,14 @@ public class HelloController {
             tableView.refresh();
         }
     }
+    @FXML
+    public void generateAttendancePDF() {
+        if (!attendanceList.isEmpty()) {
+            AttendanceFileManager.AttendancePDFGenerator.generateAttendancePDF(attendanceList);
+        } else {
+            System.out.println("⚠️ Nėra duomenų PDF failui generuoti.");
+        }
+    }
+
+
 }

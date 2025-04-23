@@ -1,16 +1,20 @@
 package Lankomumas;
 
 import StudentuInformacija.Student;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 public class AttendanceFileManager {
     private static final String FILE_NAME = "attendance.txt";
@@ -163,6 +167,37 @@ public class AttendanceFileManager {
         }
     }
 
+    public class AttendancePDFGenerator {
 
+        public static void generateAttendancePDF(List<Attendance> attendanceList) {
+            String filePath = "attendance_report.pdf";
+
+            try {
+                PdfWriter writer = new PdfWriter(filePath);
+                PdfDocument pdfDoc = new PdfDocument(writer);
+                Document document = new Document(pdfDoc);
+
+                // Naudojame šriftą, kuris palaiko lietuviškus simbolius (pavyzdžiui, "Times New Roman")
+                PdfFont font = PdfFontFactory.createFont("C:/Windows/Fonts/times.ttf", "Identity-H");
+
+                document.add(new Paragraph("Lankomumo ataskaita").setFont(font).setFontSize(14));
+
+                for (Attendance attendance : attendanceList) {
+                    String line = attendance.getName() + " " +
+                            attendance.getSurname() + " (" +
+                            attendance.getGroup() + ") - " +
+                            attendance.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) +
+                            " - " + attendance.getStatus();
+
+                    document.add(new Paragraph(line).setFont(font)); // Užtikriname, kad lietuviški simboliai atvaizduojami
+                }
+
+                document.close();
+                System.out.println("✅ PDF failas sukurtas: " + filePath);
+            } catch (IOException e) {
+                System.out.println("❌ Klaida generuojant PDF: " + e.getMessage());
+            }
+        }
+    }
 
 }
