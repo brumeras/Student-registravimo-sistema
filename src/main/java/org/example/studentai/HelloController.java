@@ -2,6 +2,7 @@ package org.example.studentai;
 
 import Lankomumas.Attendance;
 import Lankomumas.AttendanceFileManager;
+import Lankomumas.ExcelFileHandler;
 import StudentuInformacija.Student;
 import StudentuInformacija.StudentFileManager;
 import javafx.beans.property.SimpleStringProperty;
@@ -337,6 +338,20 @@ public class HelloController {
             System.out.println("⚠️ Nėra duomenų PDF failui generuoti.");
         }
     }
+    @FXML
+    private void handleCreateExcelFromTxt() {
+        // Nurodome TXT failo kelią ir norimą Excel failo kelią
+        String txtFilePath = "C:\\Users\\semil\\desktop\\studentai\\attendance.txt"; // Nurodykite savo TXT failo kelią
+        String excelFilePath = "C:\\Users\\semil\\desktop\\studentai\\lankomumas.xlsx"; // Nurodykite savo Excel failo kelią
+
+        try {
+            ExcelFileHandler.createExcelFromTextFile(txtFilePath, excelFilePath); // Sukuriame Excel failą iš TXT
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 }

@@ -60,6 +60,16 @@
                 <scope>system</scope>
                 <systemPath>C:/Users/semil/Desktop/Studentai/libs/iText-Core-9.1.0-only-jars/io-9.1.0.jar</systemPath>
             </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
 
             <dependency>
                 <groupId>com.itextpdf</groupId>
