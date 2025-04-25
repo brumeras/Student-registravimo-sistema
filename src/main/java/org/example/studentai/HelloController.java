@@ -57,7 +57,6 @@ public class HelloController {
         pavardeColumn.setCellValueFactory(new PropertyValueFactory<>("pavarde"));
         grupeColumn.setCellValueFactory(new PropertyValueFactory<>("grupe"));
 
-        // Lankomumo lentelės duomenų susiejimas
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
         groupColumn.setCellValueFactory(new PropertyValueFactory<>("group"));
@@ -70,17 +69,19 @@ public class HelloController {
     }
 
     @FXML
-    public void addStudent() {
+    public void addStudent()
+    {
         String vardas = vardasField.getText();
         String pavarde = pavardeField.getText();
         String grupe = grupeField.getText();
 
-        if (!vardas.isEmpty() && !pavarde.isEmpty() && !grupe.isEmpty()) {
+        if(!vardas.isEmpty() && !pavarde.isEmpty() && !grupe.isEmpty())
+        {
             Student student = new Student(vardas, pavarde, grupe);
             studentList.add(student);
             tableView.refresh();
 
-            StudentFileManager.saveStudent(student); // Taisyta!
+            StudentFileManager.saveStudent(student);
 
             vardasField.clear();
             pavardeField.clear();
@@ -89,31 +90,37 @@ public class HelloController {
     }
 
     @FXML
-    public void markAttendance() {
+    public void markAttendance()
+    {
         Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
         LocalDate selectedDate = datePicker.getValue();
 
-        if (selectedStudent != null && selectedDate != null) {
+        if(selectedStudent != null && selectedDate != null)
+        {
             AttendanceFileManager.saveAttendance(selectedDate, selectedStudent.getVardas(), selectedStudent.getPavarde(), selectedStudent.getGrupe(), "Atvyko");
             System.out.println("Lankomumas pažymėtas!");
-        } else {
+        }
+        else
+        {
             System.out.println("Pasirink studentą ir datą.");
         }
     }
 
     @FXML
-    public void loadAttendanceByDate() {
+    public void loadAttendanceByDate()
+    {
         LocalDate selectedDate = datePicker.getValue();
-        if (selectedDate != null) {
-            // Iškviečiame metodą, kad atnaujintume lankomumo įrašus pagal pasirinktą datą ir studento duomenis
+        if(selectedDate != null)
+        {
             List<Attendance> loadedList = AttendanceFileManager.loadAttendanceByDate(selectedDate);
 
-            // Filtruojame tik tuos įrašus, kurie atitinka redaguotus studentus
             List<Attendance> filteredAttendance = new ArrayList<>();
 
-            for (Attendance att : loadedList) {
-                for (Student student : studentList) {
-                    if (student.getVardas().equals(att.getName()) &&
+            for (Attendance att : loadedList)
+            {
+                for (Student student : studentList)
+                {
+                    if(student.getVardas().equals(att.getName()) &&
                             student.getPavarde().equals(att.getSurname()) &&
                             student.getGrupe().equals(att.getGroup())) {
                         filteredAttendance.add(att);
@@ -121,29 +128,31 @@ public class HelloController {
                 }
             }
 
-            // Atnaujiname lentelę su filtruotais įrašais
+            //Atnaujina lentele
             this.attendanceList.setAll(filteredAttendance);
             attendanceTable.setItems(attendanceList);
             attendanceTable.refresh();
 
-            System.out.println("🔎 Rasta įrašų: " + filteredAttendance.size());
+            System.out.println("Rasta įrašų: " + filteredAttendance.size());
         } else {
-            System.out.println("⚠️ Pasirink datą.");
+            System.out.println("Pasirink datą.");
         }
     }
 
     @FXML
-    public void loadStudentList() {
+    public void loadStudentList()
+    {
         List<Student> students = StudentFileManager.loadStudents();
         originalStudentList.setAll(students);
-        studentList.setAll(students);  // rodomas sąrašas
+        studentList.setAll(students);
         tableView.setItems(studentList);
         tableView.refresh();
     }
 
 
     @FXML
-    public void selectStudent() {
+    public void selectStudent()
+    {
         Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
         if (selectedStudent != null) {
             vardasField.setText(selectedStudent.getVardas());
@@ -153,7 +162,8 @@ public class HelloController {
     }
 
     @FXML
-    public void editStudent() {
+    public void editStudent()
+    {
         Student selectedStudent = tableView.getSelectionModel().getSelectedItem();
         if (selectedStudent != null) {
             // Išsaugoti senus duomenis (kad galėtume rasti įrašus)
@@ -350,8 +360,4 @@ public class HelloController {
             e.printStackTrace();
         }
     }
-
-
-
-
 }
