@@ -7,6 +7,13 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -16,52 +23,10 @@ import java.util.List;
 
 
 
-public class AttendanceFileManager {
-    private static final String FILE_NAME = "attendance.txt";
+public class AttendanceFileManager
+{
+    private static final ObservableList<Attendance> attendanceList = FXCollections.observableArrayList();
 
-    public static void saveAttendance(LocalDate date, String studentName, String status) {
-        try (FileWriter fileWriter = new FileWriter(FILE_NAME, true);
-             PrintWriter printWriter = new PrintWriter(fileWriter)) {
-            printWriter.println(date + "," + studentName + "," + status);
-        } catch (IOException e) {
-            System.out.println("Klaida įrašant lankomumą į failą: " + e.getMessage());
-        }
-    }
-
-    public static List<Student> loadStudents() {
-        List<Student> studentList = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader("students.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 3) { // Patikriname, ar yra būtent 3 duomenys
-                    studentList.add(new Student(data[0], data[1], data[2])); // Vardas, Pavardė, Grupė
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Klaida skaitant studentų failą: " + e.getMessage());
-        }
-        return studentList;
-    }
-
-
-    public static void saveAttendance(LocalDate date, String studentName, String studentSurname, String group, String status) {
-        try (FileWriter fileWriter = new FileWriter("attendance.txt", true);
-             PrintWriter printWriter = new PrintWriter(fileWriter)) {
-            printWriter.println(studentName + "," + studentSurname + "," + group + "," + date + "," + status);
-            System.out.println("Lankomumas įrašytas: " + studentName + " " + studentSurname);
-        } catch (IOException e) {
-            System.out.println("Klaida įrašant lankomumą: " + e.getMessage());
-        }
-    }
-    public static void saveStudent(Student student) {
-        try (FileWriter fileWriter = new FileWriter("students.txt", true);
-             PrintWriter printWriter = new PrintWriter(fileWriter)) {
-            printWriter.println(student.getVardas() + "," + student.getPavarde() + "," + student.getGrupe()); // Taisyta tvarka
-        } catch (IOException e) {
-            System.out.println("Klaida įrašant studentą: " + e.getMessage());
-        }
-    }
     public static List<Attendance> loadAttendanceByDate(LocalDate selectedDate) {
         List<Attendance> attendanceList = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -111,7 +76,7 @@ public class AttendanceFileManager {
     }
 
     public static List<Attendance> loadAllAttendance() {
-        List<Attendance> attendanceList = new ArrayList<>();
+        attendanceList.clear(); // Išvalome masyvą prieš įkėlimą
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try (BufferedReader reader = new BufferedReader(new FileReader("attendance.txt"))) {
@@ -120,14 +85,16 @@ public class AttendanceFileManager {
                 String[] data = line.split(",");
                 if (data.length == 5) {
                     LocalDate date = LocalDate.parse(data[3], formatter);
-                    attendanceList.add(new Attendance(data[0], data[1], data[2], date, data[4]));
+                    Attendance attendance = new Attendance(data[0], data[1], data[2], date, data[4]);
+                    attendanceList.add(attendance);
                 }
             }
         } catch (Exception e) {
-            System.out.println("Klaida skaitant failą: " + e.getMessage());
+            System.out.println("❌ Klaida skaitant lankomumo failą: " + e.getMessage());
         }
-        return attendanceList;
+        return new ArrayList<>(attendanceList);
     }
+
     public static List<Attendance> loadAttendanceByDateRange(LocalDate startDate, LocalDate endDate) {
         List<Attendance> filteredList = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -169,7 +136,8 @@ public class AttendanceFileManager {
 
     public class AttendancePDFGenerator {
 
-        public static void generateAttendancePDF(List<Attendance> attendanceList) {
+        public static void generateAttendancePDF(List<Attendance> attendanceList)
+        {
             String filePath = "attendance_report.pdf";
 
             try {
@@ -199,5 +167,14 @@ public class AttendanceFileManager {
             }
         }
     }
+    public static void clearAttendanceFileOnStartup() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("attendance.txt", false))) {
+            // Tuščias failas – visi seni duomenys pašalinami
+            System.out.println("🗑️ Lankomumo failas išvalytas paleidus programą!");
+        } catch (IOException e) {
+            System.out.println("❌ Klaida išvalant lankomumo failą: " + e.getMessage());
+        }
+    }
+
 
 }

@@ -1,25 +1,33 @@
 package StudentuInformacija;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
-import java.io.BufferedReader;
-import java.io.FileReader;
 
 public class StudentFileManager {
 
     private static final String FILE_NAME = "students.txt";
 
-    public static void saveStudent(Student student) {
-        try (FileWriter fileWriter = new FileWriter("students.txt", true);
-             PrintWriter printWriter = new PrintWriter(fileWriter)) {
-            printWriter.println(student.getVardas() + "," + student.getPavarde() + "," + student.getGrupe()); // Taisyklinga!
+    public static void clearStudentFileOnStartup() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) {
+            // Perrašome tuščią failą, kad nebūtų jokių senų duomenų
+            System.out.println("🗑️ Studentų sąrašas TXT faile buvo išvalytas!");
         } catch (IOException e) {
-            System.out.println("Klaida įrašant studentą: " + e.getMessage());
+            System.out.println("❌ Klaida išvalant studentų failą: " + e.getMessage());
         }
     }
+
+    public static void saveStudents(List<Student> students) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) { // Perrašome failą
+            for (Student student : students) {
+                writer.println(student.getVardas() + "," + student.getPavarde() + "," + student.getGrupe());
+            }
+            System.out.println("✅ Studentų failas atnaujintas!");
+        } catch (IOException e) {
+            System.out.println("❌ Klaida įrašant studentus į failą: " + e.getMessage());
+        }
+    }
+
 
     // Metodas, skirtas nuskaityti visus studentus iš failo
     public static List<Student> loadStudents() {

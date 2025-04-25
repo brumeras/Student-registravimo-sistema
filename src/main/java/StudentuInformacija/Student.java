@@ -15,6 +15,7 @@ public class Student extends AbstractStudent
     @Override
     public String getGrupe() { return grupe; }
 
+    // Pridėk setterius
     public void setVardas(String vardas) { this.vardas = vardas; }
     public void setPavarde(String pavarde) { this.pavarde = pavarde; }
     public void setGrupe(String grupe) { this.grupe = grupe; }

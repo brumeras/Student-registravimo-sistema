@@ -21,6 +21,11 @@
             <Font name="Cambria" size="18.0" />
          </font>
       </Label>
+      <Button fx:id="importButton" onAction="#importData" prefHeight="35.0" prefWidth="131.0" text="Importuoti">
+         <font>
+            <Font name="Cambria" size="18.0" />
+         </font>
+      </Button>
       <Pane prefHeight="494.0" prefWidth="566.0">
          <children>
             <Button layoutX="5.0" layoutY="13.0" mnemonicParsing="false" onAction="#addStudent" prefHeight="25.0" prefWidth="111.0" text="Pridėti studentą">
@@ -97,6 +102,7 @@
             <TextField fx:id="groupSearchField" layoutX="723.0" layoutY="46.0" prefHeight="25.0" prefWidth="139.0" />
             <Button layoutX="572.0" layoutY="46.0" onAction="#filterAttendanceByGroup" prefHeight="25.0" prefWidth="139.0" text="Filtruoti pagal grupę" />
             <Button layoutX="307.0" layoutY="455.0" onAction="#loadFilledDays" text="Rodyti užpildytas dienas" />
+            <Button fx:id="exportButton" layoutX="566.0" layoutY="427.0" onAction="#exportData" prefHeight="25.0" prefWidth="175.0" text="Eksportuoti" />
             <TableView fx:id="daysTable" layoutX="307.0" layoutY="311.0" prefHeight="128.0" prefWidth="247.0">
                <columns>
                   <TableColumn fx:id="daysColumn" text="Užpildytos dienos" />
@@ -105,9 +111,7 @@
             <DatePicker fx:id="startDatePicker" layoutX="565.0" layoutY="350.0" />
             <DatePicker fx:id="endDatePicker" layoutX="565.0" layoutY="386.0" />
             <Button layoutX="565.0" layoutY="311.0" onAction="#filterByDateRange" text="Filtruoti intervalą" />
-            <Button layoutX="400.0" layoutY="500.0" text="Generuoti PDF" onAction="#generateAttendancePDF"/>
-            <Button text="Generuoti Excel iš TXT" onAction="#handleCreateExcelFromTxt"/>
-
+            <Button layoutX="752.0" layoutY="386.0" onAction="#generateAttendancePDF" text="Generuoti PDF" />
          </children>
       </Pane>
    </children>
